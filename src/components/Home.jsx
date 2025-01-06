@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useSpring, animated } from 'react-spring';
 import localforage from 'localforage';
+import { defaultGameData } from '../services/mockData';
 
 function Home() {
-  const [streak, setStreak] = useState(0);
-  const [totalLosses, setTotalLosses] = useState(0);
+  const [streak, setStreak] = useState(defaultGameData.currentStreak);
+  const [totalLosses, setTotalLosses] = useState(defaultGameData.totalLosses);
 
   useEffect(() => {
     localforage.getItem('gameData').then((data) => {
@@ -41,7 +42,7 @@ function Home() {
         totalLosses: newTotalLosses,
         lossHistory: [...(data.lossHistory || []), newLoss]
       } : {
-        currentStreak: 0,
+        ...defaultGameData,
         totalLosses: 1,
         lossHistory: [newLoss]
       };
@@ -50,17 +51,27 @@ function Home() {
   };
 
   return (
-    <div className="text-center">
-      <h2 className="text-2xl mb-4">Days Without Loss</h2>
-      <div className="text-6xl mb-8 text-yellow-400 blink">{streak}</div>
-      <animated.button
-        style={buttonAnimation}
-        onClick={handleLoss}
-        className="pixel-button bg-red-600 text-white px-6 py-3 rounded-lg text-xl mb-8"
-      >
-        I Lost The Game
-      </animated.button>
-      <div className="text-lg">Total Losses: {totalLosses}</div>
+    <div className="min-h-screen bg-gradient-to-b from-sky-400 to-sky-200 -m-4 p-4 flex flex-col items-center justify-center">
+      <div className="text-center space-y-8">
+        <div>
+          <h2 className="text-xl text-white pixel-border mb-2">CURRENT STREAK</h2>
+          <div className="text-6xl text-yellow-400 pixel-border float">{streak}</div>
+        </div>
+
+        <animated.button
+          style={buttonAnimation}
+          onClick={handleLoss}
+          className="w-48 h-48 bg-red-500 hover:bg-red-400 text-white rounded-full pixel-button border-8 border-red-700 active:border-4 flex items-center justify-center text-xl p-4 text-center leading-tight"
+        >
+          I LOST THE GAME
+        </animated.button>
+
+        <div className="bg-blue-800/80 rounded-lg p-4 mt-8">
+          <div className="text-lg text-white pixel-border">
+            Total Losses: {totalLosses}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,10 +1,7 @@
-// Mock authentication service
-const mockUsers = [];
-
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import { mockUsers, delay } from './mockData';
 
 export const register = async (username, email, password) => {
-  await delay(500); // Simulate API call
+  await delay(); // Simulate API call
   const existingUser = mockUsers.find(u => u.username === username || u.email === email);
   if (existingUser) {
     throw new Error('Username or email already exists');
@@ -15,7 +12,7 @@ export const register = async (username, email, password) => {
 };
 
 export const login = async (usernameOrEmail, password) => {
-  await delay(500); // Simulate API call
+  await delay(); // Simulate API call
   const user = mockUsers.find(u => (u.username === usernameOrEmail || u.email === usernameOrEmail) && u.password === password);
   if (!user) {
     throw new Error('Invalid credentials');
