@@ -1,0 +1,39 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+body {
+  font-family: 'Press Start 2P', cursive;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+}
+
+.pixel-border {
+  box-shadow: 
+    0 0 0 2px #000,
+    -2px 0 0 2px #000,
+    0 2px 0 2px #000,
+    2px 0 0 2px #000,
+    0 -2px 0 2px #000;
+}
+
+.pixel-button {
+  transition: all 0.1s ease;
+}
+
+.pixel-button:hover {
+  transform: scale(1.05);
+}
+
+.pixel-button:active {
+  transform: scale(0.95);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.blink {
+  animation: blink 1s infinite;
+}
