@@ -1,78 +1,138 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { register } from '../services/authService';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 function Register() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { register } = useAuth();
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match!');
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
-      const user = await register(username, email, password);
-      await login(user);
+      await register(username, email, password);
       navigate('/');
     } catch (err) {
-      setError(err.message);
+      setError('Failed to create account. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-blue-900 flex items-center justify-center px-4">
-      <div className="max-w-md w-full space-y-8 bg-blue-800 p-8 rounded-lg shadow-lg">
-        <h2 className="text-3xl font-bold text-center text-yellow-400">Register for The Game</h2>
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          <div>
-            <label htmlFor="username" className="sr-only">Username</label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-700 text-white"
-              placeholder="Username"
-            />
+    <div className="h-[100dvh] bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900 flex flex-col">
+      <div className="pt-6 pb-4 px-4 text-center">
+        <h1 className="text-3xl text-yellow-400 pixel-border mb-1">NEW PLAYER</h1>
+        <div className="text-sm text-blue-200 pixel-border">Create your game account</div>
+      </div>
+
+      <div className="flex-1 flex flex-col items-center justify-center px-4 relative">
+        {/* Elementos decorativos */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-10 left-4 text-4xl opacity-20 float">🎮</div>
+          <div className="absolute bottom-20 right-6 text-4xl opacity-20 float">🕹️</div>
+          <div className="absolute top-1/2 left-6 text-4xl opacity-20 float">👾</div>
+        </div>
+
+        <div className="w-full max-w-sm space-y-6">
+          <div className="bg-blue-950/50 rounded-xl p-6 border-4 border-blue-800 shadow-lg">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-blue-200 pixel-border mb-3 text-sm">USERNAME</label>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full px-4 py-3 bg-blue-900/50 rounded-lg border-4 border-blue-700 text-yellow-400 placeholder-blue-400 focus:outline-none focus:border-yellow-400 transition-colors pixel-border"
+                  placeholder="Choose a username"
+                  required
+                  style={{ fontFamily: "'Press Start 2P', cursive" }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-blue-200 pixel-border mb-3 text-sm">EMAIL</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 bg-blue-900/50 rounded-lg border-4 border-blue-700 text-yellow-400 placeholder-blue-400 focus:outline-none focus:border-yellow-400 transition-colors pixel-border"
+                  placeholder="Enter your email"
+                  required
+                  style={{ fontFamily: "'Press Start 2P', cursive" }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-blue-200 pixel-border mb-3 text-sm">PASSWORD</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 bg-blue-900/50 rounded-lg border-4 border-blue-700 text-yellow-400 placeholder-blue-400 focus:outline-none focus:border-yellow-400 transition-colors pixel-border"
+                  placeholder="Create password"
+                  required
+                  style={{ fontFamily: "'Press Start 2P', cursive" }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-blue-200 pixel-border mb-3 text-sm">CONFIRM PASSWORD</label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full px-4 py-3 bg-blue-900/50 rounded-lg border-4 border-blue-700 text-yellow-400 placeholder-blue-400 focus:outline-none focus:border-yellow-400 transition-colors pixel-border"
+                  placeholder="Confirm password"
+                  required
+                  style={{ fontFamily: "'Press Start 2P', cursive" }}
+                />
+              </div>
+
+              {error && (
+                <div className="bg-red-500/20 text-red-400 pixel-border text-sm px-4 py-3 rounded-lg border-2 border-red-500/30">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl pixel-button border-8 border-green-700 active:border-4 shadow-[0_0_20px_rgba(22,163,74,0.5)] transform hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? 'CREATING...' : 'CREATE ACCOUNT'}
+              </button>
+            </form>
           </div>
-          <div>
-            <label htmlFor="email" className="sr-only">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-700 text-white"
-              placeholder="Email"
-            />
+
+          <div className="text-center">
+            <Link 
+              to="/login" 
+              className="text-blue-200 hover:text-yellow-400 pixel-border text-sm transition-colors"
+            >
+              Already a player? Login here →
+            </Link>
           </div>
-          <div>
-            <label htmlFor="password" className="sr-only">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-700 text-white"
-              placeholder="Password"
-            />
-          </div>
-          <div>
-            <button type="submit" className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-              Register
-            </button>
-          </div>
-        </form>
-        <div className="text-center mt-4">
-          <p>Already have an account? <Link to="/login" className="text-blue-400 hover:text-blue-300">Login here</Link></p>
+        </div>
+      </div>
+
+      <div className="pb-8 pt-4 px-4 text-center">
+        <div className="text-xs text-blue-300/60 pixel-border">
+          Join the game and start your journey
         </div>
       </div>
     </div>
